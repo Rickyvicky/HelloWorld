@@ -1,276 +1,75 @@
-# 动态组件系统 - MCP Server Demo
-
-这是一个使用 TypeScript 构建的动态 React 组件系统，通过 MCP (Model Context Protocol) Server 实现对前端页面组件的实时控制。
-
-## 项目架构
-
-```
-动态组件系统/
-├── frontend/           # React 前端应用
-│   ├── src/
-│   │   ├── components/ # 动态组件
-│   │   ├── types/      # TypeScript 类型定义
-│   │   └── App.tsx     # 主应用组件
-│   └── package.json
-├── backend/            # MCP Server 后端
-│   ├── src/
-│   │   ├── services/   # 核心服务
-│   │   ├── routes/     # API 路由
-│   │   └── types/      # 类型定义
-│   └── package.json
-└── package.json        # 根项目配置
-```
+# 客户资产总结报告 HTML 页面
 
 ## 功能特性
 
-### 🎯 核心功能
-- **动态组件渲染**: 支持 Header、Button、Text、Image、Card、List 等组件类型
-- **实时更新**: 通过 WebSocket 实现前后端实时通信
-- **类型安全**: 完整的 TypeScript 类型定义
-- **MCP 协议**: 符合 Model Context Protocol 标准的工具接口
+- 📊 **资产诊断展示**: 显示持仓金额、收益率、产品数量等关键指标
+- 📈 **收益率曲线图**: 使用 Chart.js 展示组合收益率走势
+- 🎨 **美观界面**: 参考提供的资产报告图片设计，专业的金融报告样式
+- 🖨️ **打印功能**: 一键打印为PDF并保存到本地
+- 📱 **响应式设计**: 支持不同屏幕尺寸的设备
 
-### 🛠️ 可用工具
-1. `update_page` - 更新整个页面配置
-2. `add_component` - 添加新组件到页面
-3. `update_component` - 更新现有组件属性
-4. `remove_component` - 删除指定组件
-5. `get_current_page` - 获取当前页面配置
-6. `create_page` - 创建新页面
-7. `switch_page` - 切换到指定页面
+## 使用方法
 
-## 快速开始
+1. **直接打开**: 在浏览器中打开 `asset_report.html` 文件
+2. **查看报告**: 页面会自动加载示例数据并展示完整的资产报告
+3. **打印报告**: 点击右上角的"打印报告"按钮即可打印或保存为PDF
 
-### 1. 安装依赖
+## 数据接口说明
 
-```bash
-# 安装所有依赖
-npm run install:all
+页面设计支持两个数据接口：
 
-# 或分别安装
-npm install                    # 根目录
-cd frontend && npm install     # 前端
-cd ../backend && npm install   # 后端
-```
-
-### 2. 启动服务
-
-```bash
-# 同时启动前后端（推荐）
-npm run dev
-
-# 或分别启动
-npm run dev:backend   # 启动后端 (端口 3001)
-npm run dev:frontend  # 启动前端 (端口 3000)
-```
-
-### 3. 访问应用
-
-- 前端应用: http://localhost:3000
-- API 文档: http://localhost:3001/api
-- 健康检查: http://localhost:3001/health
-- WebSocket: ws://localhost:3001
-
-## API 使用示例
-
-### 基础组件操作
-
-#### 添加组件
-```bash
-curl -X POST http://localhost:3001/api/components \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "button",
-    "props": {
-      "text": "新按钮",
-      "variant": "primary",
-      "onClick": "custom_action"
-    },
-    "style": {
-      "backgroundColor": "#28a745"
+### 接口1: 资产总结诊断
+```javascript
+{
+    "returnCode": "SUC0000",
+    "errorMsg": null,
+    "body": {
+        "amount": 12.34,           // 持仓金额
+        "holdYield": 12.34,        // 持仓收益率(已乘100)
+        "holdEarning": 12.34,      // 持仓收益
+        "holdProductNumber": 4,     // 持仓产品数量
+        "performanceSummary": "...", // 业绩总结文本
+        "assetDiagnosis": [...],    // 资产类别诊断
+        "styleDiagnosis": [...],    // 投资风格诊断
+        "fixIncomeSummary": "...",  // 固收基金总结
+        "stockSummary": "...",      // 权益基金总结
+        "homogeneitySummary": "..." // 同质化基金总结
     }
-  }'
+}
 ```
 
-#### 更新组件
-```bash
-curl -X PUT http://localhost:3001/api/components/your-component-id \
-  -H "Content-Type: application/json" \
-  -d '{
-    "props": {
-      "text": "更新后的按钮文本"
-    },
-    "style": {
-      "backgroundColor": "#ffc107"
+### 接口2: 收益率曲线
+```javascript
+{
+    "returnCode": "SUC0000",
+    "errorMsg": null,
+    "body": {
+        "trend": [...],           // 收益率趋势数据
+        "mddStartDate": "2025-01-01", // 最大回撤开始日期
+        "mddEndDate": "2025-02-01",   // 最大回撤结束日期
+        "mdd": 13.05              // 最大回撤幅度(已乘100)
     }
-  }'
-```
-
-#### 删除组件
-```bash
-curl -X DELETE http://localhost:3001/api/components/your-component-id
-```
-
-### MCP 工具调用
-
-#### 使用工具接口添加组件
-```bash
-curl -X POST http://localhost:3001/api/tools/add_component \
-  -H "Content-Type: application/json" \
-  -d '{
-    "type": "text",
-    "props": {
-      "content": "这是通过MCP工具添加的文本",
-      "size": "large"
-    },
-    "style": {
-      "color": "#007bff",
-      "textAlign": "center"
-    }
-  }'
-```
-
-#### 获取当前页面配置
-```bash
-curl http://localhost:3001/api/tools/get_current_page
-```
-
-#### 更新整个页面
-```bash
-curl -X POST http://localhost:3001/api/tools/update_page \
-  -H "Content-Type: application/json" \
-  -d '{
-    "pageConfig": {
-      "id": "demo",
-      "title": "我的自定义页面",
-      "components": [
-        {
-          "id": "custom-header",
-          "type": "header",
-          "props": { "text": "自定义标题", "level": 1 },
-          "style": { "color": "#28a745", "textAlign": "center" }
-        },
-        {
-          "id": "custom-card",
-          "type": "card",
-          "props": { "title": "自定义卡片" },
-          "children": [
-            {
-              "id": "card-text",
-              "type": "text",
-              "props": { "content": "这是卡片内的文本内容", "size": "medium" }
-            }
-          ]
-        }
-      ]
-    }
-  }'
-```
-
-## 组件类型说明
-
-### Header 组件
-```json
-{
-  "type": "header",
-  "props": {
-    "text": "标题文本",
-    "level": 1  // 1-6 对应 h1-h6
-  },
-  "style": { "color": "#333", "textAlign": "center" }
 }
 ```
 
-### Button 组件
-```json
-{
-  "type": "button",
-  "props": {
-    "text": "按钮文本",
-    "variant": "primary",  // primary | secondary | danger
-    "onClick": "action_name"  // 事件处理器名称
-  },
-  "style": { "margin": "10px" }
-}
-```
+## 自定义数据
 
-### Text 组件
-```json
-{
-  "type": "text",
-  "props": {
-    "content": "文本内容",
-    "size": "medium"  // small | medium | large
-  },
-  "style": { "fontSize": "16px", "lineHeight": "1.5" }
-}
-```
+如果您需要使用实际的接口数据，可以修改 HTML 文件中的 JavaScript 部分：
 
-### Image 组件
-```json
-{
-  "type": "image",
-  "props": {
-    "src": "https://example.com/image.jpg",
-    "alt": "图片描述",
-    "width": 300,
-    "height": 200
-  },
-  "style": { "borderRadius": "8px" }
-}
-```
-
-### Card 组件（容器）
-```json
-{
-  "type": "card",
-  "props": {
-    "title": "卡片标题",
-    "padding": 20
-  },
-  "style": { "backgroundColor": "white", "boxShadow": "0 2px 4px rgba(0,0,0,0.1)" },
-  "children": [
-    // 子组件配置...
-  ]
-}
-```
-
-### List 组件
-```json
-{
-  "type": "list",
-  "props": {
-    "items": ["项目1", "项目2", "项目3"],
-    "ordered": false  // true 为有序列表，false 为无序列表
-  },
-  "style": { "paddingLeft": "20px" }
-}
-```
-
-## 开发指南
-
-### 添加新组件类型
-
-1. 在 `backend/src/types/index.ts` 中添加新的组件类型定义
-2. 在 `frontend/src/components/DynamicComponent.tsx` 中添加渲染逻辑
-3. 更新 `ComponentService.ts` 中的 `createComponent` 方法
-
-### 扩展 MCP 工具
-
-1. 在 `MCPServer.ts` 的 `initializeMCPTools` 方法中添加新工具定义
-2. 在 `executeTool` 方法中添加处理逻辑
-3. 可选：在 `api.ts` 中添加对应的 HTTP 端点
+1. 将 `sampleData1` 和 `sampleData2` 替换为实际的 API 调用
+2. 修改 `loadData()` 函数以处理实际的数据加载逻辑
 
 ## 技术栈
 
-- **前端**: React, TypeScript, WebSocket
-- **后端**: Node.js, Express, TypeScript, WebSocket
-- **协议**: HTTP REST API, WebSocket, MCP (Model Context Protocol)
-- **构建工具**: npm workspaces, ts-node-dev
+- HTML5 + CSS3
+- JavaScript (ES6+)
+- Chart.js (图表库)
+- 响应式网格布局
+- CSS Grid 和 Flexbox
 
-## 许可证
+## 浏览器兼容性
 
-MIT License
-
-## 贡献
-
-欢迎提交 Issue 和 Pull Request！
+- Chrome 60+
+- Firefox 55+
+- Safari 12+
+- Edge 79+
